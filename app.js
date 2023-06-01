@@ -1,38 +1,38 @@
-var inputField = document.querySelector("#dob");
-var descEl = document.querySelector(".desc");
-var ageEl = document.querySelector(".age");
-var errorEl = document.querySelector(".error");
-var spanEl = document.createElement("span");
-descEl.appendChild(spanEl);
+let error = document.querySelector(".error");
 
-let currentDate = new Date();
+let dateEl = document.querySelector("#dob");
+let ageEl = document.querySelector(".desc");
+let ageContainerEl = document.querySelector(".age");
 
-function getAge() {
-  var birthDate = document.querySelector("#dob").value;
-  if (new Date(birthDate) > currentDate) {
-    descEl.classList.add("hidden");
-    ageEl.classList.add("hidden");
-    errorEl.style.display = "block";
+dateEl.addEventListener("change", getAge);
+
+function getAge(e) {
+  let selectedDate = new Date(e.target.value);
+  if (selectedDate.getTime() > Date.now()) {
+    error.style.display = "block";
+    return;
   }
-  var age = calcAge(birthDate);
-  displayAge(birthDate, age);
+  let { year, month, day } = calcAge(selectedDate);
+  displayAge(year, month, day);
 }
 
-inputField.addEventListener("change", getAge);
+function calcAge(date) {
+  let dateObj = date.getTime();
+  let todayDate = Date.now();
 
-function calcAge(birthDate) {
-  var ageDifMil = Date.now() - new Date(birthDate).getTime();
-  var ageDate = new Date(ageDifMil);
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
+  let ageDiffMs = todayDate - dateObj;
+
+  let ageDiff = new Date(ageDiffMs);
+
+  let year = ageDiff.getFullYear() - 1970;
+  let month = ageDiff.getMonth();
+  let day = ageDiff.getDate() - 1;
+  return { year, month, day };
 }
 
-function displayAge(birthDate, age) {
-  spanEl.textContent = age;
-  let years = document.querySelector("#years");
-  years.textContent =
-    new Date().getFullYear() - new Date(birthDate).getFullYear();
-  let months = document.querySelector("#months");
-  months.textContent = new Date().getMonth() - new Date(birthDate).getMonth();
-  let days = document.querySelector("#days");
-  days.textContent = new Date().getDate() - new Date(birthDate).getDate();
+function displayAge(year, month, day) {
+  ageEl.textContent = `Your Age is: ${year}`;
+  ageContainerEl.children[0].textContent = year;
+  ageContainerEl.children[1].textContent = month;
+  ageContainerEl.children[2].textContent = day;
 }
